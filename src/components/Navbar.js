@@ -86,8 +86,17 @@ const Navbar = ({ darkMode, setDarkMode }) => {
           onClick={() => setDrawerOpen(false)}
         >
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-              Test Manager
+            <Typography 
+              variant="h6" 
+              component={Link} 
+              to="/" 
+              sx={{ 
+                fontWeight: 'bold',
+                textDecoration: 'none',
+                color: 'inherit'
+              }}
+            >
+              Test Flow
             </Typography>
           </Box>
           <Divider />
@@ -128,12 +137,22 @@ const Navbar = ({ darkMode, setDarkMode }) => {
   
   const renderDesktopNav = () => (
     <>
-      <Typography variant="h6" component="div" sx={{ 
-        flexGrow: 0,
-        fontWeight: 'bold',
-        mr: 3
-      }}>
-        Test Manager
+      <Typography 
+        variant="h6" 
+        component={Link} 
+        to="/"
+        sx={{ 
+          flexGrow: 0,
+          fontWeight: 'bold',
+          mr: 3,
+          textDecoration: 'none',
+          color: 'white',
+          '&:hover': {
+            cursor: 'pointer'
+          }
+        }}
+      >
+        Test Flow
       </Typography>
       
       <Box sx={{ flexGrow: 1, display: 'flex' }}>

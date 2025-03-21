@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import TestCasesPage from "./pages/TestCasePage";
 import TestSuitesPage from "./pages/TestSuitePage";
 import TestCaseDashboard from "./pages/Dashboard";
+import HomePage from "./pages/HomePage";
 
 function App() {
   // Load Dark Mode preference from localStorage
@@ -24,6 +25,8 @@ function App() {
       <Router>
         <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
         <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/dashboard" element={<TestCaseDashboard />} />
           <Route path="/test-cases" element={<TestCasesPage />} />
           <Route path="/test-suites" element={<TestSuitesPage />} />
