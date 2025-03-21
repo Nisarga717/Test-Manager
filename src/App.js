@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { getTheme } from "./styles/theme"; // ✅ Import theme function
+import Navbar from "./components/Navbar";
+import TestCasesPage from "./pages/TestCasePage";
+import TestSuitesPage from "./pages/TestSuitePage";
 
 function App() {
+  // Load Dark Mode preference from localStorage
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true"; // Default to saved value
+  });
+
+  // Save Dark Mode preference whenever it changes
+  useEffect(() => {
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={getTheme(darkMode)}>
+      <CssBaseline /> {/* Ensures consistent dark/light backgrounds */}
+      <Router>
+        <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+        <Routes>
+          <Route path="/test-cases" element={<TestCasesPage />} />
+          <Route path="/test-suites" element={<TestSuitesPage />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

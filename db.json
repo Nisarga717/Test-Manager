@@ -1,0 +1,138 @@
+{
+    "testCases": [
+      {
+        "id": "1",
+        "title": "Login Test",
+        "description": "Tests user login",
+        "priority": "High",
+        "executionStatus": "Pending",
+        "testSuiteId": "1",
+        "assignedUserId": "1"
+      },
+      {
+        "id": "2",
+        "title": "Signup Test",
+        "description": "Tests user signup",
+        "priority": "Medium",
+        "executionStatus": "Passed",
+        "testSuiteId": "2",
+        "assignedUserId": "2"
+      },
+      {
+        "id": "3",
+        "title": "Payment Test",
+        "description": "Tests payment flow",
+        "priority": "Low",
+        "executionStatus": "Failed",
+        "testSuiteId": "1"
+      },
+      {
+        "id": "4",
+        "title": "Profile Update Test",
+        "description": "Tests user profile update",
+        "priority": "High",
+        "executionStatus": "Pending",
+        "testSuiteId": "3",
+        "assignedUserId": "3"
+      },
+      {
+        "id": "5",
+        "title": "Logout Test",
+        "description": "Tests user logout functionality",
+        "priority": "Medium",
+        "executionStatus": "Passed",
+        "testSuiteId": "1"
+      },
+      {
+        "id": "6",
+        "title": "Password Reset Test",
+        "description": "Tests password reset flow",
+        "priority": "High",
+        "executionStatus": "Failed",
+        "testSuiteId": "4"
+      },
+      {
+        "id": "7",
+        "title": "Order Placement Test",
+        "description": "Tests order placement",
+        "priority": "High",
+        "executionStatus": "In Progress",
+        "testSuiteId": "5",
+        "assignedUserId": "4"
+      },
+      {
+        "id": "8",
+        "title": "Cart Functionality Test",
+        "description": "Tests adding and removing items from cart",
+        "priority": "Medium",
+        "executionStatus": "Pending",
+        "testSuiteId": "5"
+      },
+      {
+        "id": "9",
+        "title": "Email Verification Test",
+        "description": "Tests email verification after signup",
+        "priority": "Low",
+        "executionStatus": "Passed",
+        "testSuiteId": "3"
+      },
+      {
+        "id": "10",
+        "title": "Mobile Responsiveness Test",
+        "description": "Tests UI on mobile devices",
+        "priority": "High",
+        "executionStatus": "In Progress",
+        "testSuiteId": "6",
+        "assignedUserId": "5"
+      }
+    ],
+    "testSuites": [
+      {
+        "id": "1",
+        "title": "Authentication Suite"
+      },
+      {
+        "id": "2",
+        "title": "Payment Suite"
+      },
+      {
+        "id": "3",
+        "title": "User Management Suite"
+      },
+      {
+        "id": "4",
+        "title": "Security Suite"
+      },
+      {
+        "id": "5",
+        "title": "E-Commerce Suite"
+      },
+      {
+        "id": "6",
+        "title": "UI/UX Testing Suite"
+      }
+    ],
+    "users": [
+      {
+        "id": "1",
+        "name": "John Doe"
+      },
+      {
+        "id": "2",
+        "name": "Jane Smith"
+      },
+      {
+        "id": "3",
+        "name": "Michael Johnson"
+      },
+      {
+        "id": "4",
+        "name": "Emily Davis"
+      },
+      {
+        "id": "5",
+        "name": "Daniel Brown"
+      }
+    ]
+  }
+  

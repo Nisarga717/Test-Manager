@@ -1,0 +1,9 @@
+export const FETCH_TEST_CASES = "FETCH_TEST_CASES";
+export const ADD_TEST_CASE = "ADD_TEST_CASE";
+export const UPDATE_TEST_CASE = "UPDATE_TEST_CASE";
+export const DELETE_TEST_CASE = "DELETE_TEST_CASE";
+export const FETCH_USERS = "FETCH_USERS";
+
+
+export const FETCH_TEST_SUITES = "FETCH_TEST_SUITES";
+export const ADD_TEST_SUITE = "ADD_TEST_SUITE";
