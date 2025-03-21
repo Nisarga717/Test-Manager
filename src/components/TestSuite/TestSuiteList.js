@@ -5,7 +5,8 @@ import {
   Table, TableHead, TableRow, TableCell, TableBody, 
   TablePagination, Button, CircularProgress, Typography, 
   Box, TextField, Paper, Stack, IconButton, Tooltip,
-  Card, CardContent, Divider, Alert, Fade, InputAdornment
+  Card, CardContent, Alert, Fade, InputAdornment,
+  useTheme
 } from "@mui/material";
 import { 
   Add as AddIcon, 
@@ -17,6 +18,7 @@ import {
 import TestSuiteForm from "./TestSuiteForm";
 
 const TestSuiteList = () => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const testSuites = useSelector((state) => state.testSuites.testSuites);
   const [page, setPage] = useState(0);
@@ -151,7 +153,15 @@ const TestSuiteList = () => {
         ) : error ? (
           <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>
         ) : filteredTestSuites.length === 0 ? (
-          <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'rgba(0, 0, 0, 0.02)' }}>
+          <Paper 
+            sx={{ 
+              p: 4, 
+              textAlign: 'center', 
+              backgroundColor: theme.palette.mode === 'dark' 
+                ? 'rgba(255, 255, 255, 0.05)' 
+                : 'rgba(0, 0, 0, 0.02)' 
+            }}
+          >
             <Typography color="textSecondary">
               {searchQuery ? "No test suites match your search criteria" : "No test suites available"}
             </Typography>
@@ -166,10 +176,18 @@ const TestSuiteList = () => {
             </Button>
           </Paper>
         ) : (
-          <Paper elevation={0} variant="outlined" sx={{ mb: 2, overflow: 'hidden' }}>
+          <Paper 
+            elevation={0} 
+            variant="outlined" 
+            sx={{ mb: 2, overflow: 'hidden' }}
+          >
             <Table sx={{ minWidth: 650 }}>
               <TableHead>
-                <TableRow sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}>
+                <TableRow sx={{ 
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.05)' 
+                    : 'rgba(0, 0, 0, 0.04)' 
+                }}>
                   <TableCell sx={{ fontWeight: 'bold' }}>Title</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 'bold', width: '160px' }}>Actions</TableCell>
@@ -177,7 +195,17 @@ const TestSuiteList = () => {
               </TableHead>
               <TableBody>
                 {filteredTestSuites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((testSuite) => (
-                  <TableRow key={testSuite.id} hover>
+                  <TableRow 
+                    key={testSuite.id} 
+                    hover
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: theme.palette.mode === 'dark' 
+                          ? 'rgba(255, 255, 255, 0.08)' 
+                          : 'rgba(0, 0, 0, 0.04)'
+                      }
+                    }}
+                  >
                     <TableCell>{testSuite.title}</TableCell>
                     <TableCell>{testSuite.description || "—"}</TableCell>
                     <TableCell align="right">
@@ -187,7 +215,11 @@ const TestSuiteList = () => {
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete">
-                        <IconButton color="error" size="small" onClick={() => handleDeleteConfirm(testSuite.id)}>
+                        <IconButton 
+                          color="error" 
+                          size="small" 
+                          onClick={() => handleDeleteConfirm(testSuite.id)}
+                        >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>

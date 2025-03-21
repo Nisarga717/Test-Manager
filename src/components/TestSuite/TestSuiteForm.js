@@ -13,7 +13,8 @@ import {
   Divider,
   Paper,
   IconButton,
-  Grid
+  Grid,
+  useTheme
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
@@ -21,6 +22,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 
 const TestSuiteForm = ({ open, handleClose, editingTestSuite }) => {
   const dispatch = useDispatch();
+  const theme = useTheme(); // Get the current theme
 
   const [formData, setFormData] = useState({
     title: "",
@@ -76,6 +78,14 @@ const TestSuiteForm = ({ open, handleClose, editingTestSuite }) => {
     handleClose(); // Close the dialog after submitting
   };
 
+  // Header background colors adapted for dark mode
+  const getHeaderBgColor = () => {
+    if (theme.palette.mode === "dark") {
+      return editingTestSuite ? "rgba(25, 118, 210, 0.2)" : "rgba(76, 175, 80, 0.2)";
+    }
+    return editingTestSuite ? "#e3f2fd" : "#e8f5e9";
+  };
+
   return (
     <Dialog 
       open={open} 
@@ -84,11 +94,14 @@ const TestSuiteForm = ({ open, handleClose, editingTestSuite }) => {
       maxWidth="sm"
       PaperProps={{
         elevation: 5,
-        sx: { borderRadius: 2 }
+        sx: { 
+          borderRadius: 2,
+          bgcolor: theme.palette.background.paper
+        }
       }}
     >
       <DialogTitle sx={{ 
-        backgroundColor: editingTestSuite ? "#e3f2fd" : "#e8f5e9", 
+        backgroundColor: getHeaderBgColor(), 
         display: "flex", 
         alignItems: "center", 
         justifyContent: "space-between",
@@ -109,7 +122,13 @@ const TestSuiteForm = ({ open, handleClose, editingTestSuite }) => {
       
       <DialogContent sx={{ padding: 3 }}>
         <Box component="form" onSubmit={handleSubmit}>
-          <Paper elevation={0} sx={{ p: 2, backgroundColor: "#f5f5f5", borderRadius: 1, mb: 2 }}>
+          <Paper elevation={0} sx={{ 
+            p: 2, 
+            backgroundColor: theme.palette.background.paper, 
+            borderRadius: 1, 
+            mb: 2,
+            border: `1px solid ${theme.palette.divider}`
+          }}>
             <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
               Test Suite Information
             </Typography>
@@ -150,7 +169,7 @@ const TestSuiteForm = ({ open, handleClose, editingTestSuite }) => {
           </Paper>
           
           <Box sx={{ mt: 2 }}>
-            <Typography variant="caption" color="textSecondary">
+            <Typography variant="caption" color="text.secondary">
               Test suites can contain multiple test cases and help organize your testing workflow.
             </Typography>
           </Box>

@@ -28,7 +28,9 @@ import {
   TableContainer,
   Alert,
   Grid,
-  InputAdornment
+  InputAdornment,
+  useTheme,
+  alpha
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -43,6 +45,7 @@ import {
 import TestCaseForm from "./TestCaseForm";
 
 const TestCaseList = () => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const testCases = useSelector((state) => state.testCases.testCases);
   const loading = useSelector((state) => state.testCases.loading);
@@ -57,6 +60,7 @@ const TestCaseList = () => {
   const [sortField, setSortField] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [showFilters, setShowFilters] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, id: null, title: "" });
 
   useEffect(() => {
     dispatch(fetchTestCases());
@@ -72,10 +76,17 @@ const TestCaseList = () => {
     setOpenForm(false);
   };
 
-  const handleDelete = (id, title) => {
-    if (window.confirm(`Are you sure you want to delete the test case "${title}"?`)) {
-      dispatch(deleteTestCase(id));
-    }
+  const handleDeleteConfirm = (id, title) => {
+    setDeleteConfirmation({ open: true, id, title });
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteTestCase(deleteConfirmation.id));
+    setDeleteConfirmation({ open: false, id: null, title: "" });
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmation({ open: false, id: null, title: "" });
   };
 
   const handleRefresh = () => {
@@ -89,24 +100,64 @@ const TestCaseList = () => {
     setSortOrder("asc");
   };
 
-  // Get priority color
+  // Get priority color - theme aware
   const getPriorityColor = (priority) => {
+    const isDark = theme.palette.mode === 'dark';
+    
     switch (priority) {
-      case "High": return { bg: "#ffebee", color: "#d32f2f" };
-      case "Medium": return { bg: "#fff8e1", color: "#ff8f00" };
-      case "Low": return { bg: "#e8f5e9", color: "#2e7d32" };
-      default: return { bg: "#f5f5f5", color: "#757575" };
+      case "High":
+        return { 
+          bg: isDark ? alpha('#d32f2f', 0.2) : '#ffebee', 
+          color: isDark ? '#ff6060' : '#d32f2f' 
+        };
+      case "Medium":
+        return { 
+          bg: isDark ? alpha('#ff8f00', 0.2) : '#fff8e1', 
+          color: isDark ? '#ffb74d' : '#ff8f00' 
+        };
+      case "Low":
+        return { 
+          bg: isDark ? alpha('#2e7d32', 0.2) : '#e8f5e9', 
+          color: isDark ? '#66bb6a' : '#2e7d32' 
+        };
+      default:
+        return { 
+          bg: isDark ? alpha('#757575', 0.2) : '#f5f5f5', 
+          color: isDark ? '#bdbdbd' : '#757575' 
+        };
     }
   };
 
-  // Get status color
+  // Get status color - theme aware
   const getStatusColor = (status) => {
+    const isDark = theme.palette.mode === 'dark';
+    
     switch (status) {
-      case "Passed": return { bg: "#e8f5e9", color: "#2e7d32" };
-      case "Failed": return { bg: "#ffebee", color: "#d32f2f" };
-      case "In Progress": return { bg: "#e3f2fd", color: "#1976d2" };
-      case "Pending": return { bg: "#fff8e1", color: "#ff8f00" };
-      default: return { bg: "#f5f5f5", color: "#757575" };
+      case "Passed":
+        return { 
+          bg: isDark ? alpha('#2e7d32', 0.2) : '#e8f5e9', 
+          color: isDark ? '#66bb6a' : '#2e7d32' 
+        };
+      case "Failed":
+        return { 
+          bg: isDark ? alpha('#d32f2f', 0.2) : '#ffebee', 
+          color: isDark ? '#ff6060' : '#d32f2f' 
+        };
+      case "In Progress":
+        return { 
+          bg: isDark ? alpha('#1976d2', 0.2) : '#e3f2fd', 
+          color: isDark ? '#64b5f6' : '#1976d2' 
+        };
+      case "Pending":
+        return { 
+          bg: isDark ? alpha('#ff8f00', 0.2) : '#fff8e1', 
+          color: isDark ? '#ffb74d' : '#ff8f00' 
+        };
+      default:
+        return { 
+          bg: isDark ? alpha('#757575', 0.2) : '#f5f5f5', 
+          color: isDark ? '#bdbdbd' : '#757575' 
+        };
     }
   };
 
@@ -143,6 +194,27 @@ const TestCaseList = () => {
       (statusFilter ? testCase.executionStatus === statusFilter : true)
     )
   );
+
+  // Theme-based style variables
+  const filterPaperBg = theme.palette.mode === 'dark' 
+    ? alpha(theme.palette.background.paper, 0.6)
+    : alpha(theme.palette.action.hover, 0.1);
+    
+  const tableHeadBg = theme.palette.mode === 'dark'
+    ? alpha(theme.palette.background.paper, 0.8)
+    : alpha(theme.palette.action.hover, 0.1);
+    
+  const emptyStateBg = theme.palette.mode === 'dark'
+    ? alpha(theme.palette.background.paper, 0.6)
+    : alpha(theme.palette.action.hover, 0.1);
+    
+  const actionButtonBgPrimary = theme.palette.mode === 'dark'
+    ? alpha(theme.palette.primary.main, 0.2)
+    : alpha(theme.palette.primary.main, 0.08);
+    
+  const actionButtonBgError = theme.palette.mode === 'dark'
+    ? alpha(theme.palette.error.main, 0.2)
+    : alpha(theme.palette.error.main, 0.08);
 
   return (
     <Box p={3}>
@@ -181,6 +253,26 @@ const TestCaseList = () => {
             </Box>
           </Box>
 
+          {/* Delete Confirmation Alert */}
+          {deleteConfirmation.open && (
+            <Alert 
+              severity="warning" 
+              sx={{ mb: 3 }}
+              action={
+                <>
+                  <Button color="inherit" size="small" onClick={handleCancelDelete} sx={{ mr: 1 }}>
+                    Cancel
+                  </Button>
+                  <Button color="error" size="small" onClick={handleDelete} variant="contained">
+                    Delete
+                  </Button>
+                </>
+              }
+            >
+              Are you sure you want to delete the test case "{deleteConfirmation.title}"? This action cannot be undone.
+            </Alert>
+          )}
+
           {/* Search, Filter, and Sorting Controls */}
           <Box mb={3}>
             <TextField
@@ -195,6 +287,13 @@ const TestCaseList = () => {
                     <SearchIcon />
                   </InputAdornment>
                 ),
+                endAdornment: searchQuery && (
+                  <InputAdornment position="end">
+                    <IconButton size="small" onClick={() => setSearchQuery("")}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
                 sx: { borderRadius: 2 }
               }}
               size="small"
@@ -202,7 +301,15 @@ const TestCaseList = () => {
           </Box>
 
           {showFilters && (
-            <Paper elevation={0} sx={{ p: 2, mb: 3, backgroundColor: "#f5f5f5", borderRadius: 2 }}>
+            <Paper 
+              elevation={0} 
+              sx={{ 
+                p: 2, 
+                mb: 3, 
+                backgroundColor: filterPaperBg, 
+                borderRadius: 2 
+              }}
+            >
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sm={6} md={3}>
                   <FormControl fullWidth size="small">
@@ -273,7 +380,15 @@ const TestCaseList = () => {
               <CircularProgress />
             </Box>
           ) : processedTestCases.length === 0 ? (
-            <Paper elevation={0} sx={{ p: 4, textAlign: "center", backgroundColor: "#f5f5f5", borderRadius: 2 }}>
+            <Paper 
+              elevation={0} 
+              sx={{ 
+                p: 4, 
+                textAlign: "center", 
+                backgroundColor: emptyStateBg, 
+                borderRadius: 2 
+              }}
+            >
               <Typography variant="h6" color="textSecondary">
                 No test cases found
               </Typography>
@@ -297,7 +412,7 @@ const TestCaseList = () => {
           ) : (
             <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 2 }}>
               <Table>
-                <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+                <TableHead sx={{ backgroundColor: tableHeadBg }}>
                   <TableRow>
                     <TableCell><Typography fontWeight="bold">Title</Typography></TableCell>
                     <TableCell><Typography fontWeight="bold">Description</Typography></TableCell>
@@ -312,7 +427,17 @@ const TestCaseList = () => {
                   {processedTestCases
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((testCase) => (
-                      <TableRow key={testCase.id} hover>
+                      <TableRow 
+                        key={testCase.id} 
+                        hover
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: theme.palette.mode === 'dark' 
+                              ? alpha(theme.palette.action.hover, 0.1) 
+                              : alpha(theme.palette.action.hover, 0.05)
+                          }
+                        }}
+                      >
                         <TableCell>
                           <Typography fontWeight="medium">{testCase.title}</Typography>
                         </TableCell>
@@ -368,11 +493,11 @@ const TestCaseList = () => {
                                   width: 24,
                                   height: 24,
                                   borderRadius: '50%',
-                                  backgroundColor: 'primary.light',
+                                  backgroundColor: theme.palette.primary.main,
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
-                                  color: 'white',
+                                  color: theme.palette.primary.contrastText,
                                   mr: 1,
                                   fontSize: '0.75rem'
                                 }}
@@ -392,7 +517,7 @@ const TestCaseList = () => {
                                 size="small" 
                                 color="primary" 
                                 onClick={() => handleOpenForm(testCase)}
-                                sx={{ backgroundColor: 'rgba(25, 118, 210, 0.08)' }}
+                                sx={{ backgroundColor: actionButtonBgPrimary }}
                               >
                                 <EditIcon fontSize="small" />
                               </IconButton>
@@ -401,8 +526,8 @@ const TestCaseList = () => {
                               <IconButton 
                                 size="small" 
                                 color="error"
-                                onClick={() => handleDelete(testCase.id, testCase.title)}
-                                sx={{ backgroundColor: 'rgba(211, 47, 47, 0.08)' }}
+                                onClick={() => handleDeleteConfirm(testCase.id, testCase.title)}
+                                sx={{ backgroundColor: actionButtonBgError }}
                               >
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
@@ -418,7 +543,7 @@ const TestCaseList = () => {
               
               <Box display="flex" justifyContent="space-between" alignItems="center" px={2}>
                 <Typography variant="body2" color="textSecondary">
-                  Showing {Math.min(processedTestCases.length, page * rowsPerPage + 1)} to{" "}
+                  Showing {processedTestCases.length === 0 ? 0 : Math.min(processedTestCases.length, page * rowsPerPage + 1)} to{" "}
                   {Math.min(processedTestCases.length, page * rowsPerPage + rowsPerPage)} of{" "}
                   {processedTestCases.length} entries
                 </Typography>
@@ -427,7 +552,7 @@ const TestCaseList = () => {
                   component="div"
                   count={processedTestCases.length}
                   rowsPerPage={rowsPerPage}
-                  page={page}
+                  page={processedTestCases.length === 0 ? 0 : page}
                   onPageChange={(event, newPage) => setPage(newPage)}
                   onRowsPerPageChange={(event) => {
                     setRowsPerPage(parseInt(event.target.value, 10));

@@ -19,7 +19,8 @@ import {
   Grid,
   Paper,
   IconButton,
-  CircularProgress
+  CircularProgress,
+  useTheme
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
@@ -32,6 +33,7 @@ const TestCaseForm = ({ open, handleClose, editingTestCase }) => {
   const users = useSelector((state) => state.users.users);
   const testSuites = useSelector((state) => state.testSuites.testSuites);
   const loading = useSelector((state) => state.users.loading || state.testSuites.loading);
+  const theme = useTheme(); // Get the current theme
 
   const [formData, setFormData] = useState({
     title: "",
@@ -107,13 +109,22 @@ const TestCaseForm = ({ open, handleClose, editingTestCase }) => {
     handleClose();
   };
 
+  // Priority colors that work in both light and dark modes
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case "High": return "#f44336";
-      case "Medium": return "#ff9800";
-      case "Low": return "#4caf50";
-      default: return "#757575";
+      case "High": return theme.palette.mode === "dark" ? "#f44336" : "#f44336"; // Red
+      case "Medium": return theme.palette.mode === "dark" ? "#ff9800" : "#ff9800"; // Orange
+      case "Low": return theme.palette.mode === "dark" ? "#4caf50" : "#4caf50"; // Green
+      default: return theme.palette.text.secondary;
     }
+  };
+
+  // Header background colors adapted for dark mode
+  const getHeaderBgColor = () => {
+    if (theme.palette.mode === "dark") {
+      return editingTestCase ? "rgba(25, 118, 210, 0.2)" : "rgba(76, 175, 80, 0.2)";
+    }
+    return editingTestCase ? "#e3f2fd" : "#e8f5e9";
   };
 
   return (
@@ -124,11 +135,14 @@ const TestCaseForm = ({ open, handleClose, editingTestCase }) => {
       maxWidth="md"
       PaperProps={{
         elevation: 5,
-        sx: { borderRadius: 2 }
+        sx: { 
+          borderRadius: 2,
+          bgcolor: theme.palette.background.paper
+        }
       }}
     >
       <DialogTitle sx={{ 
-        backgroundColor: editingTestCase ? "#e3f2fd" : "#e8f5e9", 
+        backgroundColor: getHeaderBgColor(), 
         display: "flex", 
         alignItems: "center", 
         justifyContent: "space-between",
@@ -157,7 +171,12 @@ const TestCaseForm = ({ open, handleClose, editingTestCase }) => {
             <Grid container spacing={3}>
               {/* Title and Description Section */}
               <Grid item xs={12}>
-                <Paper elevation={0} sx={{ p: 2, backgroundColor: "#f5f5f5", borderRadius: 1 }}>
+                <Paper elevation={0} sx={{ 
+                  p: 2, 
+                  backgroundColor: theme.palette.background.paper, 
+                  borderRadius: 1,
+                  border: `1px solid ${theme.palette.divider}`
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     Basic Information
                   </Typography>
@@ -197,7 +216,13 @@ const TestCaseForm = ({ open, handleClose, editingTestCase }) => {
 
               {/* Status and Priority Section */}
               <Grid item xs={12} md={6}>
-                <Paper elevation={0} sx={{ p: 2, backgroundColor: "#f5f5f5", height: "100%", borderRadius: 1 }}>
+                <Paper elevation={0} sx={{ 
+                  p: 2, 
+                  backgroundColor: theme.palette.background.paper, 
+                  height: "100%", 
+                  borderRadius: 1,
+                  border: `1px solid ${theme.palette.divider}`
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom display="flex" alignItems="center">
                     <PriorityHighIcon fontSize="small" sx={{ mr: 1 }} />
                     Status & Priority
@@ -292,7 +317,13 @@ const TestCaseForm = ({ open, handleClose, editingTestCase }) => {
 
               {/* Association Section */}
               <Grid item xs={12} md={6}>
-                <Paper elevation={0} sx={{ p: 2, backgroundColor: "#f5f5f5", height: "100%", borderRadius: 1 }}>
+                <Paper elevation={0} sx={{ 
+                  p: 2, 
+                  backgroundColor: theme.palette.background.paper, 
+                  height: "100%", 
+                  borderRadius: 1,
+                  border: `1px solid ${theme.palette.divider}`
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom display="flex" alignItems="center">
                     <GroupIcon fontSize="small" sx={{ mr: 1 }} />
                     Associations
