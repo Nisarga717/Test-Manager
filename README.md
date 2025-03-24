@@ -12,9 +12,7 @@ A modern web-based tool for managing test cases and test suites. This applicatio
 - [Installation](#installation)
 - [Usage](#usage)
 - [Screenshots](#screenshots)
-- [Project Structure](#project-structure)
 - [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -168,19 +166,19 @@ Enjoy using and enhancing your Test Manager App!
 Here are some screenshots of the Test Manager App:
 
 - **Dashboard:**
-  ![Home Page Screenshot](./screenshots/dashboard.png)
+  ![Home Page Screenshot](./src/assets/dashboard.png)
   
 - **Test Cases Page:**
-  ![Test Cases Screenshot](./screenshots/test-cases.png)
+  ![Test Cases Screenshot](./src/assets/test-cases.png)
   
 - **Test Suites Page:**
-  ![Test Suites Screenshot](./screenshots/test-suites.png)
+  ![Test Suites Screenshot](./src/assets/test-suites.png)
   
 - **Dark Mode Example:**
-  ![Dark Mode Screenshot](./screenshots/dark-mode.png)
+  ![Dark Mode Screenshot](./src/assets/dark-mode.png)
   
 - **Home**
-  ![Notification Screenshot](./screenshots/home.png)
+  ![Notification Screenshot](./src/assets/home.png)
 
 ---
 
