@@ -169,10 +169,10 @@ Here are some screenshots of the Test Manager App:
   ![Home Page Screenshot](./src/assets/dashboard.png)
   
 - **Test Cases Page:**
-  ![Test Cases Screenshot](./src/assets/test-cases.png)
+  ![Test Cases Screenshot](./src/assets/test-case.png)
   
 - **Test Suites Page:**
-  ![Test Suites Screenshot](./src/assets/test-suites.png)
+  ![Test Suites Screenshot](./src/assets/test-suite.png)
   
 - **Dark Mode Example:**
   ![Dark Mode Screenshot](./src/assets/dark-mode.png)
