@@ -88,3 +88,17 @@ The following npm packages will be installed via `npm install`:
    ```bash
    git clone https://github.com/yourusername/test-manager.git
    cd test-manager
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+
+3. **Set up the Mock API:**
+
+  Make sure you have json-server installed globally (or install it locally):
+   ```bash
+  npm install -g json-server
+
+
+
