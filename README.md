@@ -163,3 +163,78 @@ Once you have the project up and running, here are some next steps and additiona
 
 Enjoy using and enhancing your Test Manager App!
 
+## Screenshots
+
+Here are some screenshots of the Test Manager App:
+
+- **Dashboard:**
+  ![Home Page Screenshot](./screenshots/dashboard.png)
+  
+- **Test Cases Page:**
+  ![Test Cases Screenshot](./screenshots/test-cases.png)
+  
+- **Test Suites Page:**
+  ![Test Suites Screenshot](./screenshots/test-suites.png)
+  
+- **Dark Mode Example:**
+  ![Dark Mode Screenshot](./screenshots/dark-mode.png)
+  
+- **Home**
+  ![Notification Screenshot](./screenshots/home.png)
+
+---
+
+## Contributing
+
+Contributions to the Test Manager App are welcome and appreciated! Follow these guidelines to help us improve the project:
+
+1. **Fork the Repository**
+   - Click the **Fork** button in the upper-right corner of the repository on GitHub to create a copy under your account.
+
+2. **Clone Your Fork**
+   - Clone the forked repository to your local machine:
+     ```bash
+     git clone https://github.com/yourusername/test-manager.git
+     cd test-manager
+     ```
+
+3. **Create a New Branch**
+   - Create a new branch for your feature or bug fix. Use a descriptive name:
+     ```bash
+     git checkout -b feature/your-feature-name
+     ```
+
+4. **Make Your Changes**
+   - Implement your changes while following the project's coding style.
+   - If you add new features, consider writing tests to ensure they work as expected.
+   - Make sure your changes do not break existing functionality.
+
+5. **Commit Your Changes**
+   - Commit your changes with a clear and concise commit message:
+     ```bash
+     git commit -am "Add: brief description of the feature or fix"
+     ```
+
+6. **Push Your Branch**
+   - Push your branch to your forked repository:
+     ```bash
+     git push origin feature/your-feature-name
+     ```
+
+7. **Create a Pull Request**
+   - Go to the original repository on GitHub.
+   - Click the **Compare & pull request** button next to your branch.
+   - Fill in the pull request template (if available) or provide a clear description of your changes, the problem they solve, and any additional context.
+   - Submit the pull request for review.
+
+8. **Review Process**
+   - Your pull request will be reviewed by the project maintainers.
+   - You might be asked to make further changes—please address any comments or suggestions.
+   - Once approved, your changes will be merged into the project.
+
+9. **Follow the Code of Conduct**
+   - Please adhere to the project's [Code of Conduct](./CODE_OF_CONDUCT.md) to ensure a welcoming and respectful environment for all contributors.
+
+Thank you for your interest in contributing to the Test Manager App!
+
+
