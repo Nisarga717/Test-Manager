@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTestCases } from '../redux/actions/testCaseActions';
 import {
   Grid,
   Paper,
@@ -37,123 +39,16 @@ import {
   Person as PersonIcon,
   Folder as FolderIcon,
   BugReport as BugReportIcon,
-  TrendingUp as TrendingUpIcon
+  TrendingUp as TrendingUpIcon,
+  Refresh as RefreshIcon
 } from '@mui/icons-material';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 
-// Mock data - in a real app, this would come from your Redux store
-const mockData = {
-  testCases: [
-    {
-      id: "1",
-      title: "Login Test",
-      description: "Tests user login",
-      priority: "High",
-      executionStatus: "Pending",
-      testSuiteId: "1",
-      assignedUserId: "1"
-    },
-    {
-      id: "2",
-      title: "Signup Test",
-      description: "Tests user signup",
-      priority: "Medium",
-      executionStatus: "Passed",
-      testSuiteId: "2",
-      assignedUserId: "2"
-    },
-    {
-      id: "3",
-      title: "Payment Test",
-      description: "Tests payment flow",
-      priority: "Low",
-      executionStatus: "Failed",
-      testSuiteId: "1"
-    },
-    {
-      id: "4",
-      title: "Profile Update Test",
-      description: "Tests user profile update",
-      priority: "High",
-      executionStatus: "Pending",
-      testSuiteId: "3",
-      assignedUserId: "3"
-    },
-    {
-      id: "5",
-      title: "Logout Test",
-      description: "Tests user logout functionality",
-      priority: "Medium",
-      executionStatus: "Passed",
-      testSuiteId: "1"
-    },
-    {
-      id: "6",
-      title: "Password Reset Test",
-      description: "Tests password reset flow",
-      priority: "High",
-      executionStatus: "Failed",
-      testSuiteId: "4"
-    },
-    {
-      id: "7",
-      title: "Order Placement Test",
-      description: "Tests order placement",
-      priority: "High",
-      executionStatus: "In Progress",
-      testSuiteId: "5",
-      assignedUserId: "4"
-    },
-    {
-      id: "8",
-      title: "Cart Functionality Test",
-      description: "Tests adding and removing items from cart",
-      priority: "Medium",
-      executionStatus: "Pending",
-      testSuiteId: "5"
-    },
-    {
-      id: "9",
-      title: "Email Verification Test",
-      description: "Tests email verification after signup",
-      priority: "Low",
-      executionStatus: "Passed",
-      testSuiteId: "3"
-    },
-    {
-      id: "10",
-      title: "Mobile Responsiveness Test",
-      description: "Tests UI on mobile devices",
-      priority: "High",
-      executionStatus: "In Progress",
-      testSuiteId: "6",
-      assignedUserId: "5"
-    }
-  ],
-  testSuites: [
-    { id: "1", title: "Authentication Suite" },
-    { id: "2", title: "Payment Suite" },
-    { id: "3", title: "User Management Suite" },
-    { id: "4", title: "Security Suite" },
-    { id: "5", title: "E-Commerce Suite" },
-    { id: "6", title: "UI/UX Testing Suite" }
-  ],
-  users: [
-    { id: "1", name: "John Doe" },
-    { id: "2", name: "Jane Smith" },
-    { id: "3", name: "Michael Johnson" },
-    { id: "4", name: "Emily Davis" },
-    { id: "5", name: "Daniel Brown" }
-  ]
-};
-
 const TestCaseDashboard = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
-  const [testCases, setTestCases] = useState([]);
-  const [testSuites, setTestSuites] = useState([]);
-  const [users, setUsers] = useState([]);
   const [dashboardData, setDashboardData] = useState({
     statusData: [],
     priorityData: [],
@@ -161,18 +56,47 @@ const TestCaseDashboard = () => {
     byAssignee: []
   });
 
-  useEffect(() => {
-    // In a real application, you would fetch this data from your API or Redux store
-    setTestCases(mockData.testCases);
-    setTestSuites(mockData.testSuites);
-    setUsers(mockData.users);
-  }, []);
+  // Get test cases from Redux store
+  const testCases = useSelector(state => state.testCases.testCases);
+  
+  // Extract test suites and users from the enhanced test cases
+  const getUniqueTestSuites = () => {
+    const uniqueSuites = {};
+    testCases.forEach(testCase => {
+      if (testCase.testSuiteId && testCase.testSuiteName) {
+        uniqueSuites[testCase.testSuiteId] = { 
+          id: testCase.testSuiteId, 
+          title: testCase.testSuiteName 
+        };
+      }
+    });
+    return Object.values(uniqueSuites);
+  };
 
+  const getUniqueUsers = () => {
+    const uniqueUsers = {};
+    testCases.forEach(testCase => {
+      if (testCase.assignedUserId && testCase.assignedUserName) {
+        uniqueUsers[testCase.assignedUserId] = { 
+          id: testCase.assignedUserId, 
+          name: testCase.assignedUserName 
+        };
+      }
+    });
+    return Object.values(uniqueUsers);
+  };
+
+  // Fetch test cases when component mounts
   useEffect(() => {
-    if (testCases.length > 0 && testSuites.length > 0 && users.length > 0) {
+    dispatch(fetchTestCases());
+  }, [dispatch]);
+
+  // Recalculate dashboard data when test cases change
+  useEffect(() => {
+    if (testCases.length > 0) {
       calculateDashboardData();
     }
-  }, [testCases, testSuites, users]);
+  }, [testCases]);
 
   const calculateDashboardData = () => {
     // Calculate status data for pie chart
@@ -184,7 +108,9 @@ const TestCaseDashboard = () => {
     };
 
     testCases.forEach(testCase => {
-      statusCounts[testCase.executionStatus]++;
+      if (statusCounts[testCase.executionStatus] !== undefined) {
+        statusCounts[testCase.executionStatus]++;
+      }
     });
 
     const statusData = Object.keys(statusCounts).map(status => ({
@@ -200,13 +126,18 @@ const TestCaseDashboard = () => {
     };
 
     testCases.forEach(testCase => {
-      priorityCounts[testCase.priority]++;
+      if (priorityCounts[testCase.priority] !== undefined) {
+        priorityCounts[testCase.priority]++;
+      }
     });
 
     const priorityData = Object.keys(priorityCounts).map(priority => ({
       name: priority,
       value: priorityCounts[priority]
     }));
+
+    // Get unique test suites
+    const testSuites = getUniqueTestSuites();
 
     // Calculate data by test suite for bar chart
     const testSuiteMap = testSuites.reduce((acc, suite) => {
@@ -222,7 +153,7 @@ const TestCaseDashboard = () => {
     }, {});
 
     testCases.forEach(testCase => {
-      if (testSuiteMap[testCase.testSuiteId]) {
+      if (testCase.testSuiteId && testSuiteMap[testCase.testSuiteId]) {
         testSuiteMap[testCase.testSuiteId].total++;
         
         if (testCase.executionStatus === "Passed") {
@@ -238,6 +169,9 @@ const TestCaseDashboard = () => {
     });
 
     const byTestSuite = Object.values(testSuiteMap);
+
+    // Get unique users
+    const users = getUniqueUsers();
 
     // Calculate data by assignee
     const userMap = users.reduce((acc, user) => {
@@ -288,6 +222,11 @@ const TestCaseDashboard = () => {
       byTestSuite,
       byAssignee
     });
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchTestCases());
+    handleMenuClose();
   };
 
   const handleMenuClick = (event) => {
@@ -365,7 +304,10 @@ const TestCaseDashboard = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleMenuClose}>Refresh Data</MenuItem>
+          <MenuItem onClick={handleRefresh}>
+            <RefreshIcon sx={{ mr: 1 }} />
+            Refresh Data
+          </MenuItem>
           <MenuItem onClick={handleMenuClose}>Export Dashboard</MenuItem>
           <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
         </Menu>
@@ -380,7 +322,7 @@ const TestCaseDashboard = () => {
               <Typography variant="h3" sx={{ mt: 1 }}>{totalTestCases}</Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                 <AssignmentIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
-                <Typography variant="body2">{testSuites.length} Test Suites</Typography>
+                <Typography variant="body2">{getUniqueTestSuites().length} Test Suites</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -481,28 +423,34 @@ const TestCaseDashboard = () => {
             }}
           >
             <Typography variant="h6" sx={{ mb: 2 }}>Test Case Status</Typography>
-            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={dashboardData.statusData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {dashboardData.statusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS_STATUS[index % COLORS_STATUS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend verticalAlign="bottom" height={36} />
-                  <RechartsTooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </Box>
+            {dashboardData.statusData.length > 0 ? (
+              <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={dashboardData.statusData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {dashboardData.statusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS_STATUS[index % COLORS_STATUS.length]} />
+                      ))}
+                    </Pie>
+                    <Legend verticalAlign="bottom" height={36} />
+                    <RechartsTooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <Typography variant="body1" color="text.secondary">No data available</Typography>
+              </Box>
+            )}
           </Paper>
         </Grid>
         
@@ -517,28 +465,34 @@ const TestCaseDashboard = () => {
             }}
           >
             <Typography variant="h6" sx={{ mb: 2 }}>Test Case Priority</Typography>
-            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={dashboardData.priorityData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {dashboardData.priorityData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS_PRIORITY[index % COLORS_PRIORITY.length]} />
-                    ))}
-                  </Pie>
-                  <Legend verticalAlign="bottom" height={36} />
-                  <RechartsTooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </Box>
+            {dashboardData.priorityData.length > 0 ? (
+              <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={dashboardData.priorityData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {dashboardData.priorityData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS_PRIORITY[index % COLORS_PRIORITY.length]} />
+                      ))}
+                    </Pie>
+                    <Legend verticalAlign="bottom" height={36} />
+                    <RechartsTooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <Typography variant="body1" color="text.secondary">No data available</Typography>
+              </Box>
+            )}
           </Paper>
         </Grid>
       </Grid>
@@ -578,28 +532,34 @@ const TestCaseDashboard = () => {
           aria-labelledby="tab-0"
           sx={{ p: 3, display: currentTab === 0 ? 'block' : 'none' }}
         >
-          <Box sx={{ height: 400 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={dashboardData.byTestSuite}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <RechartsTooltip />
-                <Legend />
-                <Bar dataKey="passed" name="Passed" stackId="a" fill={getStatusColor("Passed")} />
-                <Bar dataKey="failed" name="Failed" stackId="a" fill={getStatusColor("Failed")} />
-                <Bar dataKey="pending" name="Pending" stackId="a" fill={getStatusColor("Pending")} />
-                <Bar dataKey="inProgress" name="In Progress" stackId="a" fill={getStatusColor("In Progress")} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
+          {dashboardData.byTestSuite.length > 0 ? (
+            <Box sx={{ height: 400 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={dashboardData.byTestSuite}
+                  margin={{
+                    top: 20,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <RechartsTooltip />
+                  <Legend />
+                  <Bar dataKey="passed" name="Passed" stackId="a" fill={getStatusColor("Passed")} />
+                  <Bar dataKey="failed" name="Failed" stackId="a" fill={getStatusColor("Failed")} />
+                  <Bar dataKey="pending" name="Pending" stackId="a" fill={getStatusColor("Pending")} />
+                  <Bar dataKey="inProgress" name="In Progress" stackId="a" fill={getStatusColor("In Progress")} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400 }}>
+              <Typography variant="body1" color="text.secondary">No test suite data available</Typography>
+            </Box>
+          )}
         </Box>
         
         {/* By Assignee Tab */}
@@ -610,28 +570,34 @@ const TestCaseDashboard = () => {
           aria-labelledby="tab-1"
           sx={{ p: 3, display: currentTab === 1 ? 'block' : 'none' }}
         >
-          <Box sx={{ height: 400 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={dashboardData.byAssignee}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <RechartsTooltip />
-                <Legend />
-                <Bar dataKey="passed" name="Passed" stackId="a" fill={getStatusColor("Passed")} />
-                <Bar dataKey="failed" name="Failed" stackId="a" fill={getStatusColor("Failed")} />
-                <Bar dataKey="pending" name="Pending" stackId="a" fill={getStatusColor("Pending")} />
-                <Bar dataKey="inProgress" name="In Progress" stackId="a" fill={getStatusColor("In Progress")} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
+          {dashboardData.byAssignee.length > 0 ? (
+            <Box sx={{ height: 400 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={dashboardData.byAssignee}
+                  margin={{
+                    top: 20,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <RechartsTooltip />
+                  <Legend />
+                  <Bar dataKey="passed" name="Passed" stackId="a" fill={getStatusColor("Passed")} />
+                  <Bar dataKey="failed" name="Failed" stackId="a" fill={getStatusColor("Failed")} />
+                  <Bar dataKey="pending" name="Pending" stackId="a" fill={getStatusColor("Pending")} />
+                  <Bar dataKey="inProgress" name="In Progress" stackId="a" fill={getStatusColor("In Progress")} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400 }}>
+              <Typography variant="body1" color="text.secondary">No assignee data available</Typography>
+            </Box>
+          )}
         </Box>
         
         {/* Recent Test Cases Tab */}
@@ -642,24 +608,20 @@ const TestCaseDashboard = () => {
           aria-labelledby="tab-2"
           sx={{ p: 3, display: currentTab === 2 ? 'block' : 'none' }}
         >
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Test Suite</TableCell>
-                  <TableCell align="center">Priority</TableCell>
-                  <TableCell align="center">Status</TableCell>
-                  <TableCell>Assigned To</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {testCases.slice(0, 5).map((testCase) => {
-                  const testSuite = testSuites.find(suite => suite.id === testCase.testSuiteId);
-                  const assignedUser = testCase.assignedUserId ? 
-                    users.find(user => user.id === testCase.assignedUserId) : null;
-                  
-                  return (
+          {testCases.length > 0 ? (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Title</TableCell>
+                    <TableCell>Test Suite</TableCell>
+                    <TableCell align="center">Priority</TableCell>
+                    <TableCell align="center">Status</TableCell>
+                    <TableCell>Assigned To</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {testCases.slice(0, 5).map((testCase) => (
                     <TableRow key={testCase.id} hover>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -668,10 +630,10 @@ const TestCaseDashboard = () => {
                         </Box>
                       </TableCell>
                       <TableCell>
-                        {testSuite ? (
+                        {testCase.testSuiteName ? (
                           <Chip 
                             size="small" 
-                            label={testSuite.title} 
+                            label={testCase.testSuiteName} 
                             icon={<FolderIcon />}
                             sx={{ 
                               backgroundColor: theme.palette.mode === 'dark' ? 'rgba(33, 150, 243, 0.2)' : 'rgba(33, 150, 243, 0.1)',
@@ -695,7 +657,7 @@ const TestCaseDashboard = () => {
                         </Tooltip>
                       </TableCell>
                       <TableCell>
-                        {assignedUser ? (
+                        {testCase.assignedUserName && testCase.assignedUserName !== "Unassigned" ? (
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Avatar 
                               sx={{ 
@@ -706,20 +668,24 @@ const TestCaseDashboard = () => {
                                 bgcolor: theme.palette.primary.main
                               }}
                             >
-                              {assignedUser.name.charAt(0)}
+                              {testCase.assignedUserName.charAt(0)}
                             </Avatar>
-                            <Typography variant="body2">{assignedUser.name}</Typography>
+                            <Typography variant="body2">{testCase.assignedUserName}</Typography>
                           </Box>
                         ) : (
                           <Typography variant="body2" color="text.secondary">Unassigned</Typography>
                         )}
                       </TableCell>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
+              <Typography variant="body1" color="text.secondary">No test cases available</Typography>
+            </Box>
+          )}
         </Box>
       </Paper>
     </Box>

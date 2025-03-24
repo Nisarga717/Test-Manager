@@ -16,6 +16,7 @@ import {
   Clear as ClearIcon
 } from "@mui/icons-material";
 import TestSuiteForm from "./TestSuiteForm";
+import Notification from "../common/notification"; // Import Notification component
 
 const TestSuiteList = () => {
   const theme = useTheme();
@@ -28,43 +29,118 @@ const TestSuiteList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, id: null });
+  const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, id: null, title: "" });
+  
+  // Add notification state
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+    title: ""
+  });
+
+  // Add a refresh trigger state
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refreshData = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         await dispatch(fetchTestSuites());
       } catch (err) {
         setError("Failed to load test suites. Please try again.");
+        showNotification(
+          "Failed to load test suites. Please try again.",
+          "error",
+          "Loading Error"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, refreshTrigger]); // Add refreshTrigger to dependencies
+
+  // Handle notification close
+  const handleNotificationClose = () => {
+    setNotification({ ...notification, open: false });
+  };
+
+  // Show notification
+  const showNotification = (message, severity, title) => {
+    setNotification({
+      open: true,
+      message,
+      severity,
+      title
+    });
+  };
 
   const handleOpenForm = (testSuite = null) => {
     setEditingTestSuite(testSuite);
     setOpenForm(true);
   };
 
-  const handleCloseForm = () => {
-    setEditingTestSuite(null);
+  const handleCloseForm = (wasSubmitted, action, testSuiteTitle) => {
     setOpenForm(false);
+    setEditingTestSuite(null);
+
+    // Refresh data if form was submitted successfully
+    if (wasSubmitted) {
+      refreshData();
+      
+      // Show notification if form was submitted
+      if (action && testSuiteTitle) {
+        if (action === "create") {
+          showNotification(
+            `Test suite "${testSuiteTitle}" has been created successfully.`,
+            "success",
+            "Suite Created"
+          );
+        } else if (action === "update") {
+          showNotification(
+            `Test suite "${testSuiteTitle}" has been updated successfully.`,
+            "success",
+            "Suite Updated"
+          );
+        }
+      }
+    }
   };
 
-  const handleDeleteConfirm = (id) => {
-    setDeleteConfirmation({ open: true, id });
+  const handleDeleteConfirm = (id, title) => {
+    setDeleteConfirmation({ open: true, id, title });
   };
 
-  const handleDelete = () => {
-    dispatch(deleteTestSuite(deleteConfirmation.id));
-    setDeleteConfirmation({ open: false, id: null });
+  const handleDelete = async () => {
+    const { id, title } = deleteConfirmation;
+    
+    try {
+      await dispatch(deleteTestSuite(id));
+      refreshData(); // Refresh data after successful deletion
+      showNotification(
+        `Test suite "${title}" has been deleted.`,
+        "success",
+        "Suite Deleted"
+      );
+    } catch (err) {
+      showNotification(
+        "Failed to delete test suite. Please try again.",
+        "error",
+        "Delete Error"
+      );
+    }
+    
+    setDeleteConfirmation({ open: false, id: null, title: "" });
   };
 
   const handleCancelDelete = () => {
-    setDeleteConfirmation({ open: false, id: null });
+    setDeleteConfirmation({ open: false, id: null, title: "" });
   };
 
   const handleClearSearch = () => {
@@ -139,7 +215,7 @@ const TestSuiteList = () => {
                 </>
               }
             >
-              Are you sure you want to delete this test suite? This action cannot be undone.
+              Are you sure you want to delete the test suite "{deleteConfirmation.title}"? This action cannot be undone.
             </Alert>
           </Fade>
         )}
@@ -218,7 +294,7 @@ const TestSuiteList = () => {
                         <IconButton 
                           color="error" 
                           size="small" 
-                          onClick={() => handleDeleteConfirm(testSuite.id)}
+                          onClick={() => handleDeleteConfirm(testSuite.id, testSuite.title)}
                         >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
@@ -244,6 +320,17 @@ const TestSuiteList = () => {
           }}
         />
       </CardContent>
+
+      {/* Notification component */}
+      <Notification
+        open={notification.open}
+        message={notification.message}
+        title={notification.title}
+        severity={notification.severity}
+        handleClose={handleNotificationClose}
+        autoHideDuration={5000}
+        position={{ vertical: "top", horizontal: "right" }}
+      />
     </Card>
   );
 };

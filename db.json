@@ -41,7 +41,10 @@
       "description": "Tests user logout functionality",
       "priority": "Medium",
       "executionStatus": "Passed",
-      "testSuiteId": "1"
+      "testSuiteId": "1",
+      "testSuiteName": "Authentication Suite",
+      "assignedUserName": "Jane Smith",
+      "assignedUserId": "2"
     },
     {
       "id": "6",
@@ -75,29 +78,23 @@
       "priority": "Low",
       "executionStatus": "Passed",
       "testSuiteId": "3"
-    },
-    {
-      "id": "ea04",
-      "title": "svbrnd",
-      "description": "czsxvbd",
-      "priority": "Low",
-      "executionStatus": "Passed",
-      "testSuiteId": "3",
-      "assignedUserId": "2"
     }
   ],
   "testSuites": [
     {
       "id": "1",
-      "title": "Authentication Suite"
+      "title": "Authentication Suite",
+      "description": "for user login and authentication"
     },
     {
       "id": "2",
-      "title": "Payment Suite"
+      "title": "Payment Suite",
+      "description": "for managing payment options"
     },
     {
       "id": "3",
-      "title": "User Management Suite"
+      "title": "User Management Suite",
+      "description": "based on user management"
     },
     {
       "id": "4",
@@ -105,16 +102,12 @@
     },
     {
       "id": "5",
-      "title": "E-Commerce Suite"
+      "title": "E-Commerce Suite",
+      "description": "for ecommerce platforms\n"
     },
     {
       "id": "6",
       "title": "UI/UX Testing Suite"
-    },
-    {
-      "id": "13a1",
-      "title": "new suite",
-      "description": "testing suite"
     }
   ],
   "users": [

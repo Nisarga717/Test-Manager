@@ -43,13 +43,13 @@ import {
   MoreVert as MoreVertIcon
 } from "@mui/icons-material";
 import TestCaseForm from "./TestCaseForm";
+import Notification from "../common/notification";
+
 
 const TestCaseList = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const testCases = useSelector((state) => state.testCases.testCases);
-  const loading = useSelector((state) => state.testCases.loading);
-  const error = useSelector((state) => state.testCases.error);
   
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -61,9 +61,18 @@ const TestCaseList = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [showFilters, setShowFilters] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, id: null, title: "" });
+  const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchTestCases());
+    setLoading(true);
+    dispatch(fetchTestCases())
+      .then(() => setLoading(false))
+      .catch(err => {
+        setError(err.message || "Failed to fetch test cases");
+        setLoading(false);
+      });
   }, [dispatch]);
 
   const handleOpenForm = (testCase = null) => {
@@ -71,9 +80,23 @@ const TestCaseList = () => {
     setOpenForm(true);
   };
 
-  const handleCloseForm = () => {
+  const handleCloseForm = (updated = false, testCaseData = null) => {
     setEditingTestCase(null);
     setOpenForm(false);
+    
+    if (updated && testCaseData) {
+      setNotification({
+        open: true,
+        message: `Test case "${testCaseData.title}" updated successfully`,
+        severity: "success"
+      });
+    } else if (updated) {
+      setNotification({
+        open: true,
+        message: "Test case created successfully",
+        severity: "success"
+      });
+    }
   };
 
   const handleDeleteConfirm = (id, title) => {
@@ -82,15 +105,28 @@ const TestCaseList = () => {
 
   const handleDelete = () => {
     dispatch(deleteTestCase(deleteConfirmation.id));
+    
+    setNotification({ 
+      open: true, 
+      message: `Test case "${deleteConfirmation.title}" deleted successfully`, 
+      severity: "success" 
+    });
+  
     setDeleteConfirmation({ open: false, id: null, title: "" });
   };
-
+  
   const handleCancelDelete = () => {
     setDeleteConfirmation({ open: false, id: null, title: "" });
   };
 
   const handleRefresh = () => {
-    dispatch(fetchTestCases());
+    setLoading(true);
+    dispatch(fetchTestCases())
+      .then(() => setLoading(false))
+      .catch(err => {
+        setError(err.message || "Failed to fetch test cases");
+        setLoading(false);
+      });
   };
 
   const resetFilters = () => {
@@ -574,6 +610,8 @@ const TestCaseList = () => {
       </Card>
 
       <TestCaseForm open={openForm} handleClose={handleCloseForm} editingTestCase={editingTestCase} />
+      <Notification open={notification.open} message={notification.message} severity={notification.severity} handleClose={() => setNotification({ ...notification, open: false })} />
+
     </Box>
   );
 };
