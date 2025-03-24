@@ -1,70 +1,90 @@
-# Getting Started with Create React App
+# Test Manager App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern web-based tool for managing test cases and test suites. This application helps QA teams organize, execute, and track tests effectively. With a clean, responsive UI built on React, Redux, and Material-UI, it features CRUD operations, search, filtering, sorting, pagination, user assignment, dark mode, and notifications.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Table of Contents
 
-### `npm start`
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+- **Test Case Management**
+  - Display a list of test cases with:
+    - Title
+    - Description
+    - Execution Status (Pending, In Progress, Passed, Failed)
+    - Priority (Low, Medium, High)
+    - Associated Test Suite
+    - Assigned User
+  - CRUD operations for test cases.
+  - Pagination, search, filtering, and sorting for efficient navigation.
+  - Pop-up notifications (using Material-UI Snackbar) for add, update, and delete actions.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Test Suite Management**
+  - Display a list of test suites.
+  - CRUD operations for test suites.
+  - Search functionality.
+  - Forms for adding and editing test suites via Material-UI Dialogs.
 
-### `npm run build`
+- **User Assignment**
+  - Assign test cases to users using a dropdown in the form.
+  - Display assigned user names in the test case list.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Dark Mode**
+  - Toggle between light and dark themes using Material-UI theme customization.
+  - Dark mode state is persisted via `localStorage`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Notifications**
+  - Success and error pop-ups using Material-UI Snackbar to provide user feedback.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Technologies Used
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **React.js** (with functional components and hooks)
+- **Redux** (for state management)
+- **Redux Thunk** (for asynchronous actions)
+- **Material-UI (MUI)** (for modern, responsive UI components)
+- **React Router** (for client-side routing)
+- **json-server** (to simulate a backend API)
+- **Recharts** (for charts, if needed)
+- **Lucide-react** (for icons)
+- **redux-devtools-extension** (for debugging Redux)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Requirements
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Before running the project, ensure you have installed:
+- **Node.js** (v14 or later)
+- **npm** (v6 or later)
 
-## Learn More
+The following npm packages will be installed via `npm install`:
+- react, react-dom, react-router-dom
+- redux, react-redux, redux-thunk
+- @mui/material, @mui/icons-material, @emotion/react, @emotion/styled
+- recharts, lucide-react
+- json-server
+- redux-devtools-extension (optional, for debugging)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Installation
 
-### Code Splitting
+1. **Clone the repository:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+   ```bash
+   git clone https://github.com/yourusername/test-manager.git
+   cd test-manager
