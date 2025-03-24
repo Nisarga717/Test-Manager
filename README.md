@@ -99,6 +99,67 @@ The following npm packages will be installed via `npm install`:
   Make sure you have json-server installed globally (or install it locally):
    ```bash
   npm install -g json-server
+  ```
+4. **Then, in the project root, run:**
 
+  ```bash
+  json-server --watch db.json --port 5000
+  ```
+## Usage
 
+After installing dependencies and setting up the mock API, follow these steps to use the application:
+
+1. **Start the Mock API:**
+   - Open a terminal in the project root and run:
+     ```bash
+     json-server --watch db.json --port 5000
+     ```
+   - This will start the mock API at [http://localhost:5000](http://localhost:5000).
+
+2. **Start the Development Server:**
+   - In another terminal, run:
+     ```bash
+     npm start
+     ```
+   - The app will launch in your browser at [http://localhost:3000](http://localhost:3000).
+
+3. **Navigating the Application:**
+   - **Test Cases Page:**
+     - View the list of test cases with details like title, description, execution status, priority, associated test suite, and assigned user.
+     - Use the search bar to filter test cases by keywords.
+     - Utilize filters and sorting options (if enabled) for better organization.
+     - Click the **"New Test Case"** button to open a pop-up dialog for adding a new test case.
+     - Edit or delete existing test cases using the corresponding action buttons. Notifications will confirm these actions.
+   - **Test Suites Page:**
+     - Manage test suites with similar functionality: view, search, add, edit, and delete test suites.
+   - **User Assignment:**
+     - In the Test Case form, assign a test case to a user using the provided dropdown.
+   - **Dark Mode:**
+     - Toggle between light and dark themes using the dark mode toggle button in the navigation bar.
+
+4. **Notifications:**
+   - Pop-up notifications (Snackbars) will appear to inform you of successful add, update, or delete actions, or to alert you when errors occur.
+
+---
+
+## After Installation
+
+Once you have the project up and running, here are some next steps and additional considerations:
+
+- **Customization:**
+  - **Theme Customization:** Modify the `theme.js` file (located in the `styles` folder) to change colors, fonts, and other design elements.
+  - **API Integration:** Update the API endpoints in the Redux actions if you decide to connect to a real backend service.
+  - **Feature Enhancements:** Consider adding additional features like detailed reporting, user roles, or integration with CI/CD pipelines.
+
+- **Deployment:**
+  - You can deploy the application on hosting platforms such as **Vercel**, **Netlify**, or **Heroku** for public access.
+  - Make sure to update the API endpoints if needed when deploying.
+
+- **Contributing:**
+  - Contributions are welcome! Please refer to the [Contributing](#contributing) section for guidelines on how to get started.
+
+- **Screenshots:**
+  - Update the screenshots in the repository (under a `screenshots` folder) and the README to reflect the current UI and features.
+
+Enjoy using and enhancing your Test Manager App!
 
